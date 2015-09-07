@@ -2,7 +2,7 @@
 require '../vendor/autoload.php';
 
 $app = new \Slim\Slim();
-$app->get('/hello/:name/:surname', function ($p1,$p2) {
+$app->get('/hello/:name/:surrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrname', function ($p1,$p2) {
     echo "What, " . $p1 . " " . $p2 . "<br>";
     echo hash('sha256', 'test');
 
