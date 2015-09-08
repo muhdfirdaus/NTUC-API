@@ -2,7 +2,7 @@
 require '../vendor/autoload.php';
 
 $app = new \Slim\Slim();
-$app->get('/hello/:name/:surrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrname', function ($p1,$p2) {
+$app->get('/hello/:name/:surname', function ($p1,$p2) {
     echo "What, " . $p1 . " " . $p2 . "<br>";
     echo hash('sha256', 'test');
 
@@ -14,16 +14,16 @@ $app->get('/hello/:name', function ($p1) use(&$aa){
 	echo $tt;
 
 });
-$app->post('/hello/:name', function ($p1)  {
-    echo "byebye, " . $p1 . " <br>";
+//$app->post('/hello/:name', function ($p1)  {
+  //  echo "byebye, " . $p1 . " <br>";
 	
-});
+//});
 $app->get('/api/getcurrenttime', 'aa');
 
 function aa() {
    $date = time();
-   //echo $date."<br>";
-   return $date;
+   echo $date."<br>";
+   //return $date;
    //$date1 = date('i:s',$date);
    //echo $date1;
 };
@@ -37,7 +37,20 @@ $app->post('/api/updates/', function () use($app){
 	$tsB = $current - 90;
 	$tsA =  $current + 90;
 	
-	if($timestamp>=$tsB && $timestamp<= $tsA)
+	
+	do
+		{
+			if ($timestamp>$current)
+			{	$diff = $timestamp - $current;
+				$timestamp = $timestamp - $diff;
+			}
+			else if ($timestamp<$current)
+			{	$diff = $current - $timestamp;
+				$timestamp = $timestamp + $diff;
+			}
+			
+			
+		}while($timestamp<$tsB || $timestamp> $tsA);
 	
     $request = $app->request;
     $nric = $request->post('nric');
@@ -73,7 +86,7 @@ $app->post('/api/updates/', function () use($app){
     $arr = array($nric, $date, $amount);
    	fputcsv($fd, $arr);
     fclose($fd);
-	
+	$dd = date();
 
 });
 
