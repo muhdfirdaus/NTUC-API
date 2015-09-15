@@ -41,6 +41,8 @@ function retrieveUserInfo($apikey) {
 	return FALSE;
 }
 
+
+
 $app->post('/api/updates/', function () use($app){
 	$apiKey = $app->request->headers->get('apikey');
 	if (!strlen($apiKey)) {
@@ -51,6 +53,10 @@ $app->post('/api/updates/', function () use($app){
 	}
 	$timestamp = $app->request->headers->get('timestamp');
 	$fingerprint = $app->request->headers->get('fingerprint');
+	if (!strlen($fingerprint)){
+		$app->halt(400,json_encode(array('status' => 3,'message' => 'Please specify fingerprint')));
+	}
+	
 	$timestamp =  intval($timestamp);
 	$current = intval(time());
 	$terms = 0;
