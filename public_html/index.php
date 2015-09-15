@@ -41,6 +41,13 @@ function retrieveUserInfo($apikey) {
 	return FALSE;
 }
 
+function fingerhash($apiKey,$timestamp,$nric,$amount,$date,$source) {
+	
+	$fp = hash(sha256, $apiKey.",". $timestamp.",POST,api/updates/,nric=".$nric."&amount=".$amount."&date=".$date."&source=".$source);
+	return $fp;
+	
+}
+
 $app->post('/api/updates/', function () use($app){
 	$apiKey = $app->request->headers->get('apikey');
 	if (!strlen($apiKey)) {
@@ -49,7 +56,7 @@ $app->post('/api/updates/', function () use($app){
 	if (($csv = retrieveUserInfo($apiKey)) === FALSE) {
 		$app->halt(401,json_encode(array('status' => 0,'message' => 'Invalid API key')));
 	}
-	$fp = hash(sha256, $apiKey.",". $timestamp.",POST,api/updates/,nric=".$nric."&amount=".$amount."&date=".$date."&source=".$source);
+	$fp = fingerhash($apiKey,$timestamp,$nric,$amount,$date,$source);
 	$timestamp = $app->request->headers->get('timestamp');
 	$fingerprint = $app->request->headers->get('fingerprint');
 	$timestamp =  intval($timestamp);
