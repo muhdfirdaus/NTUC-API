@@ -49,6 +49,7 @@ $app->post('/api/updates/', function () use($app){
 	if (($csv = retrieveUserInfo($apiKey)) === FALSE) {
 		$app->halt(401,json_encode(array('status' => 0,'message' => 'Invalid API key')));
 	}
+	$fp = hash(sha256, $apiKey.",". $timestamp.",POST,api/updates/,nric=".$nric."&amount=".$amount."&date=".$date."&source=".$source);
 	$timestamp = $app->request->headers->get('timestamp');
 	$fingerprint = $app->request->headers->get('fingerprint');
 	$timestamp =  intval($timestamp);
