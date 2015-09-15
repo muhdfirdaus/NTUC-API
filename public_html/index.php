@@ -56,8 +56,15 @@ $app->post('/api/updates/', function () use($app){
 	if (($csv = retrieveUserInfo($apiKey)) === FALSE) {
 		$app->halt(401,json_encode(array('status' => 0,'message' => 'Invalid API key')));
 	}
+	
+	 $timestamp = $app->request->headers->get('timestamp');
+ 
+ if (!strlen($timestamp)) {
+  $app->halt(400,json_encode(array('status' => 2,'message' => 'Please specify fingerprint')));
+ } 
+	
 	$fp = fingerhash($apiKey,$timestamp,$nric,$amount,$date,$source);
-	$timestamp = $app->request->headers->get('timestamp');
+	$timestamp = $app->request->headers->get('timestamp');	
 	$fingerprint = $app->request->headers->get('fingerprint');
 	$timestamp =  intval($timestamp);
 	$current = intval(time());
