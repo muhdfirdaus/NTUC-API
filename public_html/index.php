@@ -113,7 +113,7 @@ $app->post('/api/updates/', function () use($app){
     $arr = array($nric, $date, $amount);
    	fputcsv($fd, $arr);
     fclose($fd);
-	//$dd = date();
+	
 });
 
 $app->run();
