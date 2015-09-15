@@ -64,19 +64,6 @@ $app->post('/api/updates/', function () use($app){
 	$tsA =  $current + 90;
 	
 	
-	do
-		{
-			if ($timestamp>$current)
-			{	$diff = $timestamp - $current;
-				$timestamp = $timestamp - $diff;
-			}
-			else if ($timestamp<$current)
-			{	$diff = $current - $timestamp;
-				$timestamp = $timestamp + $diff;
-			}
-			
-			
-		}while($timestamp<$tsB || $timestamp> $tsA);
 	
     $request = $app->request;
     $nric = $request->post('nric');
@@ -84,15 +71,18 @@ $app->post('/api/updates/', function () use($app){
     $source = $request->post('source');
    	$date = $request->post('date');
 	
-	$d = $date[6] . $date[7];
-    $m = $date[4] . $date[5];
-	$y = $date[0] . $date[1] . $date[2] . $date[3];
-
-	if ($d>31 || $m>12)
-	{echo  "Error on date! \n";
-	}
-	if($d>=25)
+	if ($timestamp>=$tsB && $timestamp<=$tsA)
 	{
+	
+		$d = $date[6] . $date[7];
+    	$m = $date[4] . $date[5];
+		$y = $date[0] . $date[1] . $date[2] . $date[3];
+
+		if ($d>31 || $m>12)
+		{echo  "Error on date! \n";
+		}
+		if($d>=25)
+		{
 		if($m==12)
 		{
 			$y = $y + 1;
@@ -102,19 +92,20 @@ $app->post('/api/updates/', function () use($app){
 		{$m = $m + 1;
 		$m = "0". $m;}
 		
+		}
+	
+		$titleD =  $y.$m;
+		$title = "misatravel_" . $source . "_" . $titleD;
+	
+	
+
+    	$fd = fopen($title . ".csv", "a");
+    	$arr = array($nric, $date, $amount);
+   		fputcsv($fd, $arr);
+    	fclose($fd);
 	}
-	
-	$titleD =  $y.$m;
-	$title = "misatravel_" . $source . "_" . $titleD;
-	
-	
-
-    $fd = fopen($title . ".csv", "a");
-    $arr = array($nric, $date, $amount);
-   	fputcsv($fd, $arr);
-    fclose($fd);
-	//$dd = date();
+	else
+	$app->halt(401,json_encode(array('status' => 3,'message' => 'Invalid Timestamp')));
 });
-
 $app->run();
 
