@@ -27,7 +27,7 @@ function aa() {
 };
 
 function retrieveUserInfo($apikey) {
-	$fh = fopen(APIKEYS_DB_PATH,'r');
+	$fh = fopen('C://xampp/htdocs/ntuc/apikeys/apikeys.csv','r');
 	try {
 		do {
 			$csv = fgetcsv($fh);
@@ -58,10 +58,10 @@ $app->post('/api/updates/', function () use($app){
 	}
 	
 	$timestamp =  intval($timestamp);
-	$current = intval(time());
+	//$current = intval(time());
 	$terms = 0;
-	$tsB = $current - 90;
-	$tsA =  $current + 90;
+	$tsB = $timestamp - 90;
+	$tsA =  $timestamp + 90;
 	
 	
 	
@@ -103,6 +103,7 @@ $app->post('/api/updates/', function () use($app){
     	$arr = array($nric, $date, $amount);
    		fputcsv($fd, $arr);
     	fclose($fd);
+		echo 0;
 	}
 	else
 	$app->halt(401,json_encode(array('status' => 3,'message' => 'Invalid Timestamp')));
