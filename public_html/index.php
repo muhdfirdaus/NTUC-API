@@ -60,7 +60,7 @@ $app->post('/api/updates/', function () use($app){
 	
 	$fingerprint = $app->request->headers->get('fingerprint');
 	if (!strlen($fingerprint)){
-		$app->halt(400,json_encode(array('status' => 3,'message' => 'Please specify fingerprint')));
+		$app->halt(401,json_encode(array('status' => 2,'message' => 'Invalid fingerprint')));
 	}
 	
 	$timestamp =  intval($timestamp);
