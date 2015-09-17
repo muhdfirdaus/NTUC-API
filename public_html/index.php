@@ -42,10 +42,23 @@ $app->get('/hello/:name', function ($p1) use(&$aa){
 	}
 
 	function fp($apikey, $timestamp, $nric, $amount, $date, $source){
-		$fp = hash(sha256, $apikey. "," .$timestamp.",POST,api/updates,nric=".$nric."&amount=".$amount."&date=".$date."&source=".$source );
+		$fp = hash('sha256', $apikey. "," .$timestamp.",POST,api/updates,nric=".$nric."&amount=".$amount."&date=".$date."&source=".$source );
 		return $fp;
 	}
+	
+	$app->get('/api/getfp', 'ab');
 
+	function ab() {
+		$timestamp = time();
+		$f = hash('sha256', "12345," .$timestamp.",POST,api/updates,nric=123&amount=123&date=20150917&source=cruise" );
+		echo $timestamp."->>".$f;
+		
+		 
+	};
+	
+	
+	
+	
 	$app->post('/api/updates/', function () use($app){
 		$apiKey = $app->request->headers->get('apikey');
 		if (!strlen($apiKey)) {
@@ -64,7 +77,7 @@ $app->get('/hello/:name', function ($p1) use(&$aa){
 		$fingerprint = $app->request->headers->get('fingerprint');
 		if (!strlen($fingerprint)){
 
-			$app->halt(401,json_encode(array('status' => 2,'message' => 'Invalid fingerprint')));
+			//$app->halt(401,json_encode(array('status' => 2,'message' => 'Invalid fingerprint')));
 
 			$app->halt(400,json_encode(array('status' => 3,'message' => 'Please specify fingerprint')));
 
@@ -86,8 +99,9 @@ $app->get('/hello/:name', function ($p1) use(&$aa){
 		$source = $request->post('source');
 		$date = $request->post('date');
 		
-		$fp = fp($apikey, $timestamp, $nric, $amount, $date, $source);
-		if ($fp = $fingerprint){
+		$fp = fp($apiKey, $timestamp, $nric, $amount, $date, $source);
+		
+		if ($fp == $fingerprint){
 			
 		if ($timestamp>=$tsB && $timestamp<=$tsA)
 		{
@@ -128,8 +142,9 @@ $app->get('/hello/:name', function ($p1) use(&$aa){
 			$app->halt(401,json_encode(array('status' => 3,'message' => 'Invalid Timestamp')));
 
 		}
-		else
-			$app->halt(401,json_encode(array('status' => 2,'message' => 'Invalid fingerprint')));
+		else if ($fp!=$fingerprint)
+			{
+			$app->halt(401,json_encode(array('status' => 2,'message' => 'Invalid fingerprint')));}
 
 
 	});
