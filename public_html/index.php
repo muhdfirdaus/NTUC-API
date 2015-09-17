@@ -60,7 +60,11 @@ $app->post('/api/updates/', function () use($app){
 	
 	$fingerprint = $app->request->headers->get('fingerprint');
 	if (!strlen($fingerprint)){
+<<<<<<< HEAD
 		$app->halt(401,json_encode(array('status' => 2,'message' => 'Invalid fingerprint')));
+=======
+		$app->halt(400,json_encode(array('status' => 3,'message' => 'Please specify fingerprint')));
+>>>>>>> issues#12
 	}
 	
 	$timestamp =  intval($timestamp);
@@ -105,6 +109,7 @@ $app->post('/api/updates/', function () use($app){
 	
 	
 
+<<<<<<< HEAD
     	$fd = fopen($title . ".csv", "a");
     	$arr = array($nric, $date, $amount);
    		fputcsv($fd, $arr);
@@ -113,6 +118,13 @@ $app->post('/api/updates/', function () use($app){
 	}
 	else
 	$app->halt(401,json_encode(array('status' => 3,'message' => 'Invalid Timestamp')));
+=======
+    $fd = fopen($title . ".csv", "a");
+    $arr = array($nric, $date, $amount);
+   	fputcsv($fd, $arr);
+    fclose($fd);
+	
+>>>>>>> issues#12
 });
 $app->run();
 
