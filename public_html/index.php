@@ -29,7 +29,7 @@ function aa() {
 };
 
 function retrieveUserInfo($apikey) {
-	$fh = fopen('C://xampp/htdocs/ntuc/apikeys/apikeys.csv','r');
+	$fh = fopen('../apikeys/apikeys.csv','r');
 	try {
 		do {
 			$csv = fgetcsv($fh);
