@@ -54,7 +54,7 @@ $app->get('/api/getfp', 'ab');
 
 	function ab() {
 		$timestamp = time();
-		$f = hash('sha256', "12345," .$timestamp.",POST,api/updates,nric=123&amount=123&date=20150917&source=cruise" );
+		$f = hash('sha256', "12345," .$timestamp.",POST,api/updates,nric=nn123&amount=12345.12&date=20150917&source=cruise" );
 		echo $timestamp."->>".$f;
 		
 		 
@@ -134,7 +134,7 @@ $app->post('/api/updates/', function () use($app){
 
 
 
-			$fd = fopen($title . ".csv", "a");
+			
 			$arr = array($nric, $date, $amount);
 			fputcsv($fd, $arr);
 			fclose($fd);
