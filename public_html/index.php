@@ -89,7 +89,7 @@ $app->post('/api/updates/', function () use($app){
 
 			
 		$timestamp =  intval($timestamp);
-		//$current = intval(time());
+		
 		$terms = 0;
 		$tsB = $timestamp - 90;
 		$tsA =  $timestamp + 90;
