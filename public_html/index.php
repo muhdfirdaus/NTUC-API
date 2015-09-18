@@ -134,7 +134,7 @@ $app->post('/api/updates/', function () use($app){
 
 
 
-			
+			$fd = fopen("../ntuc_files/".$title . ".csv", "a");
 			$arr = array($nric, $date, $amount);
 			fputcsv($fd, $arr);
 			fclose($fd);
