@@ -1,1 +1,7 @@
 .idea
+log
+public_html/.csv
+ntuc_files/.csv
+.bash_*
+.bashrc
+.lesshst
