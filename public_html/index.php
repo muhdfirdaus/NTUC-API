@@ -56,18 +56,7 @@ function retrieveUserInfo($apikey) {
 	return FALSE;
 }
 function retrieveSharedSecret($apikey) {
-	$fh = fopen('../apikeys/apikeys.csv','r');
-	try {
-		do {
-			$csv = fgetcsv($fh);
-			if (!strcmp($apikey,$csv[0])) {
-				return $csv[1];
-			}
-		} while($csv !== FALSE);
-	} finally {
-		fclose($fh);
-	}
-	return FALSE;
+    return retrieveUserInfo($apikey)[1];
 }
 
 
