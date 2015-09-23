@@ -33,6 +33,13 @@ function aa() {
    echo $date;
    
 };
+$app->get('/api/test', 'zz');
+
+function zz() {
+   $val1 = retrieveSharedSecret('ce4f472f-3535-43f5-834e-482be10cf2bb');
+   echo $val1;
+   
+};
 
 function retrieveUserInfo($apikey) {
 	$fh = fopen('../apikeys/apikeys.csv','r');
@@ -48,10 +55,23 @@ function retrieveUserInfo($apikey) {
 	}
 	return FALSE;
 }
+function retrieveSharedSecret($apikey) {
+	$fh = fopen('../apikeys/apikeys.csv','r');
+	try {
+		do {
+			$csv = fgetcsv($fh);
+			if (!strcmp($apikey,$csv[0])) {
+				return $csv[1];
+			}
+		} while($csv !== FALSE);
+	} finally {
+		fclose($fh);
+	}
+	return FALSE;
+}
 
-
-function fp($apikey, $timestamp, $nric, $amount, $date, $source){
-		$fp = hash('sha256', $apikey. "," .$timestamp.",POST,api/updates,nric=".$nric."&amount=".$amount."&date=".$date."&source=".$source );
+function fp($apikey, $secret, $timestamp, $nric, $amount, $date, $source){
+		$fp = hash('sha256', $apikey. "," . $secret. "," .$timestamp.",POST,api/updates,nric=".$nric."&amount=".$amount."&date=".$date."&source=".$source );
 		return $fp;
 }
 
@@ -60,7 +80,7 @@ $app->get('/api/getfp', 'ab');
 
 	function ab() {
 		$timestamp = time();
-		$f = hash('sha256', "12345," .$timestamp.",POST,api/updates,nric=nn123&amount=12345.12&date=20150917&source=cruise" );
+		$f = hash('sha256', "12345,123," .$timestamp.",POST,api/updates,nric=nn123&amount=1655&date=20150917&source=cruise" );
 		echo $timestamp."->>".$f;
 		
 		 
@@ -93,7 +113,7 @@ $app->post('/api/updates/', function () use($app){
 
 		
 
-			
+		$secret = retrieveSharedSecret($apiKey);	
 		$timestamp =  intval($timestamp);
 		
 		$terms = 0;
@@ -107,7 +127,7 @@ $app->post('/api/updates/', function () use($app){
 		$source = $request->post('source');
 		$date = $request->post('date');
 		
-		$fp = fp($apiKey, $timestamp, $nric, $amount, $date, $source);
+		$fp = fp($apiKey, $secret, $timestamp, $nric, $amount, $date, $source);
 		
 		if ($fp == $fingerprint){
 			
