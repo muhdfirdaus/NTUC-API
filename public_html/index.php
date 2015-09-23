@@ -70,8 +70,11 @@ function retrieveSharedSecret($apikey) {
 	return FALSE;
 }
 
-function fp($apikey, $secret, $timestamp, $nric, $amount, $date, $source){
-		$fp = hash('sha256', $apikey. "," . $secret. "," .$timestamp.",POST,/api/updates/,nric=".$nric."&amount=".$amount."&date=".$date."&source=".$source );
+
+
+function fp($apikey, $secret, $timestamp, $nric, $amount, $date, $source, $method, $resourceUri){
+		$fp = hash('sha256', $apikey. "," . $secret. "," .$timestamp."," . $method . "," . $resourceUri . "nric=".$nric."&amount=".$amount."&date=".$date."&source=".$source );
+
 		return $fp;
 }
 
@@ -106,13 +109,13 @@ $app->post('/api/updates/', function () use($app){
 		$fingerprint = $app->request->headers->get('fingerprint');
 		if (!strlen($fingerprint)){
 
-			
+		
 
 			$app->halt(400,json_encode(array('status' => 3,'message' => 'Please specify fingerprint')));
 			}
 
 		
-
+		$resourceUri = $app->request->getResourceUri();	
 		$secret = retrieveSharedSecret($apiKey);	
 		$timestamp =  intval($timestamp);
 		
@@ -127,7 +130,7 @@ $app->post('/api/updates/', function () use($app){
 		$source = $request->post('source');
 		$date = $request->post('date');
 		
-		$fp = fp($apiKey, $secret, $timestamp, $nric, $amount, $date, $source);
+		$fp = fp($apikey, $secret, $timestamp, $nric, $amount, $date, $source, 'POST', $resourceUri);
 		
 		if ($fp == $fingerprint){
 			
