@@ -71,7 +71,7 @@ function retrieveSharedSecret($apikey) {
 }
 
 function fp($apikey, $secret, $timestamp, $nric, $amount, $date, $source){
-		$fp = hash('sha256', $apikey. "," . $secret. "," .$timestamp.",POST,api/updates,nric=".$nric."&amount=".$amount."&date=".$date."&source=".$source );
+		$fp = hash('sha256', $apikey. "," . $secret. "," .$timestamp.",POST,/api/updates/,nric=".$nric."&amount=".$amount."&date=".$date."&source=".$source );
 		return $fp;
 }
 
@@ -80,7 +80,7 @@ $app->get('/api/getfp', 'ab');
 
 	function ab() {
 		$timestamp = time();
-		$f = hash('sha256', "12345,123," .$timestamp.",POST,api/updates,nric=nn123&amount=1655&date=20150917&source=cruise" );
+		$f = hash('sha256', "12345,123," .$timestamp.",POST,/api/updates/,nric=nn123&amount=1655&date=20150917&source=cruise" );
 		echo $timestamp."->>".$f;
 		
 		 
