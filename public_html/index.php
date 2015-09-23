@@ -20,6 +20,12 @@ $app->get('/hello/:name', function ($p1) use(&$aa){
 });
 
 
+$app->get('/php/details', 't'); 
+function t(){
+	phpinfo();
+	
+}
+
 $app->get('/api/getcurrenttime', 'aa');
 
 function aa() {
@@ -80,7 +86,7 @@ $app->post('/api/updates/', function () use($app){
 		$fingerprint = $app->request->headers->get('fingerprint');
 		if (!strlen($fingerprint)){
 
-			//$app->halt(401,json_encode(array('status' => 2,'message' => 'Invalid fingerprint')));
+			
 
 			$app->halt(400,json_encode(array('status' => 3,'message' => 'Please specify fingerprint')));
 			}
