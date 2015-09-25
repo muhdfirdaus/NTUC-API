@@ -59,13 +59,17 @@ function retrieveSharedSecret($apikey) {
     return retrieveUserInfo($apikey)[1];
 }
 
-
-
-function fp($apikey, $secret, $timestamp, $nric, $amount, $date, $source, $method, $resourceUri){
-		$fp = hash('sha256', $apikey. "," . $secret. "," .$timestamp."," . $method . "," . $resourceUri . "nric=".$nric."&amount=".$amount."&date=".$date."&source=".$source );
-
-		return $fp;
+function calculateFingerprint($apikey, $secret, $timestamp, $method, $resourceUri, $data){
+        return hash('sha256', "$apikey,$secret,$timestamp,$method,$resourceUri,$data" );
 }
+
+
+function fp($apikey, $secret, $timestamp, $nric, $amount, $date, $source, $method, $resourceUri)
+{
+        $fp = calculateFingerprint($apikey, $secret, $timestamp, $method, $resourceUri, "nric={$nric}&amount={$amount}&date={$date}&source={$source}");
+        return $fp;
+}
+
 
 
 $app->get('/api/getfp', 'ab');
