@@ -66,7 +66,7 @@ function calculateFingerprint($apikey, $secret, $timestamp, $method, $resourceUr
 
 function fp($apikey, $secret, $timestamp, $nric, $amount, $date, $source, $method, $resourceUri)
 {
-        $fp = calculateFingerprint($apikey, $secret, $timestamp, $method, $resourceUri, ",nric={$nric}&amount={$amount}&date={$date}&source={$source}");
+        $fp = calculateFingerprint($apikey, $secret, $timestamp, $method, $resourceUri, "nric={$nric}&amount={$amount}&date={$date}&source={$source}");
         return $fp;
 }
 
