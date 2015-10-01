@@ -26,7 +26,7 @@ function t(){
 	
 }
 
-$app->get('/api/getcurrenttime', 'aa');
+$app->get('/api/currenttime', 'aa');
 
 function aa() {
    $date = time();
