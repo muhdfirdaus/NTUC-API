@@ -85,8 +85,8 @@ $app->get('/api/getfp', 'ab');
 
 
 $app->post('/api/updates/', function () use($app){
-		$apiKey = $app->request->headers->get('apikey');
-		if (!strlen($apiKey)) {
+		$apikey = $app->request->headers->get('apikey');
+		if (!strlen($apikey)) {
 			$app->halt(400,json_encode(array('status' => 0,'message' => 'Please specify API key')));
 		}
 		if (($csv = retrieveUserInfo($apiKey)) === FALSE) {
