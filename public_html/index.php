@@ -79,14 +79,6 @@ $app->get('/api/currenttime/', function () use($app){
 	}
 
 
-$app->get('/api/test', 'zz');
-
-function zz() {
-   
-   echo date('Ymd');
-   
-};
-
 function retrieveUserInfo($apikey) {
 	$fh = fopen('../apikeys/apikeys.csv','r');
 	try {
