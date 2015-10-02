@@ -20,11 +20,6 @@ $app->get('/hello/:name', function ($p1) use(&$aa){
 });
 
 
-$app->get('/php/details', 't'); 
-function t(){
-	phpinfo();
-	
-}
 
 $app->get('/api/currenttime/', function () use($app){
 
