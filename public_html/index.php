@@ -117,6 +117,11 @@ $app->get('/api/getfp', 'ab');
 
 
 $app->post('/api/updates/', function () use($app){
+	
+	if ($_SERVER['REQUEST_METHOD'] != 'GET'){
+		$app->halt(405);
+	}
+	
 		$apikey = $app->request->headers->get('apikey');
 		if (!strlen($apikey)) {
 			$app->halt(400,json_encode(array('status' => 0,'message' => 'Please specify API key')));
@@ -130,13 +135,27 @@ $app->post('/api/updates/', function () use($app){
 		if (!strlen($timestamp)) {
 			$app->halt(400,json_encode(array('status' => 2,'message' => 'Please specify Timestamp')));
 		}
-
-		$fingerprint = $app->request->headers->get('fingerprint');
-		if (!strlen($fingerprint)){
-
 		
+		$nric = $request->post('nric');
+		
+		if (!strlen($nric)) {
+			$app->halt(400,json_encode(array('status' => 3,'message' => 'Please specify Nric')));
+		}
 
-			$app->halt(400,json_encode(array('status' => 3,'message' => 'Please specify fingerprint')));
+		$amount = round($request->post('amount'),2);
+		
+		if (!strlen($amount)){
+			$app->halt(400,json_encode(array('status' => 4,'message' => 'Please specify amount')));
+			}
+			
+		$date = $request->post('date');
+		if (!strlen($date)){			
+			$app->halt(400,json_encode(array('status' => 5,'message' => 'Please specify date')));
+			}
+			
+		$source = $request->post('source');
+		if (!strlen($source)){						
+			$app->halt(400,json_encode(array('status' => 6,'message' => 'Please specify source')));
 			}
 
 		
@@ -150,57 +169,72 @@ $app->post('/api/updates/', function () use($app){
 
 
 		$request = $app->request;
-		$nric = $request->post('nric');
-		$amount = round($request->post('amount'),2);
-		$source = $request->post('source');
-		$date = $request->post('date');
+		
+		
+		
+		
 		
 		$fp = fp($apikey, $secret, $timestamp, $nric, $amount, $date, $source, 'POST', $resourceUri);
 		
 		if ($fp == $fingerprint){
 			
-		if ($timestamp>=$tsB && $timestamp<=$tsA)
-		{
-
-			$d = $date[6] . $date[7];
-			$m = $date[4] . $date[5];
-			$y = $date[0] . $date[1] . $date[2] . $date[3];
-
-			if ($d>31 || $m>12)
-			{echo  "Error on date! \n";
-			}
-			if($d>=25)
+			if ($timestamp>=$tsB && $timestamp<=$tsA)
 			{
-				if($m==12)
-				{
-					$y = $y + 1;
-					$m = "01";
+
+				$d = $date[6] . $date[7];
+				$m = $date[4] . $date[5];
+				$y = $date[0] . $date[1] . $date[2] . $date[3];
+
+				if ($d>31 || $m>12)
+					{echo  "Error on date! \n";
+					}
+				if($d>=25)
+					{
+					if($m==12)
+					{
+						$y = $y + 1;
+						$m = "01";
+					}
+					elseif($m<12)
+					{$m = $m + 1;
+					$m = "0". $m;}
+					}
+
+				$titleD =  $y.$m;
+				$title = "misatravel_" . $source . "_" . $titleD;
+
+
+				$fd = fopen("../ntuc_files/".$title . ".csv", "a");
+				$arr = array($nric, $date, $amount);
+				fputcsv($fd, $arr);
+				fclose($fd);
+				echo 0;
 				}
-				elseif($m<12)
-				{$m = $m + 1;
-				$m = "0". $m;}
-
-			}
-
-			$titleD =  $y.$m;
-			$title = "misatravel_" . $source . "_" . $titleD;
-
-
-
-
-			$fd = fopen("../ntuc_files/".$title . ".csv", "a");
-			$arr = array($nric, $date, $amount);
-			fputcsv($fd, $arr);
-			fclose($fd);
-			echo 0;
-		}
-		else
+			else
 			$app->halt(401,json_encode(array('status' => 3,'message' => 'Invalid Timestamp')));
 
-		}
-		else if ($fp!=$fingerprint)
+			}
+			else if ($fp!=$fingerprint)
 			{
 			$app->halt(401,json_encode(array('status' => 2,'message' => 'Invalid fingerprint')));}
+			
+			else if ($nric[0]>=0 || $nric[8]>=0 || $nric[1]/$nric[1] != 1 )
+			{
+			$app->halt(401,json_encode(array('status' => 4,'message' => 'Invalid Nric format')));}
+			
+			else if (is_int($amount) === TRUE)
+			{
+			$app->halt(401,json_encode(array('status' => 5,'message' => 'Invalid price format')));}
+			
+			else if ((preg_match("/^[0-9]{4}(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])$/",$date) === FALSE)
+			{
+			$app->halt(401,json_encode(array('status' => 6,'message' => 'Invalid date format')));}
+			
+			$s1 = retrieveSource($apikey);
+			else if ($s1 != $source)
+			{
+			$app->halt(401,json_encode(array('status' => 7,'message' => 'Invalid source')));}
+		
 
 
 	});
