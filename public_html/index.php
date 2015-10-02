@@ -26,13 +26,43 @@ function t(){
 	
 }
 
-$app->get('/api/currenttime', 'aa');
+$app->get('/api/currenttime/', function () use($app){
 
-function aa() {
-   $date = time();
-   echo $date;
-   
-};
+	$head = array();
+	$val = array();
+	$ind = 0;
+	if ($_SERVER['REQUEST_METHOD'] != 'GET'){
+			$app->halt(405);
+	}
+	
+		foreach (getallheaders() as $source => $value) {
+		$head[$ind] = strval($source);
+		$val[$ind] = strval($value);
+		$ind++;
+		}
+	$q1 = $_GET['source'];
+	if ($head[3]!="apikey") {
+			$app->halt(400,json_encode(array('status' => 1,'message' => 'Please specify API key.')));
+	}
+	if ($q1 == "") {
+			$app->halt(400,json_encode(array('status' => 2,'message' => 'Please specify source.')));
+	}
+
+	$s1 = retrieveSource($val[3]);
+	$a1 = retrieveUserInfo($val[3]);
+	if ($csv = $a1 === FALSE){
+			$app->halt(401,json_encode(array('status' => 1,'message' => 'Invalid API key.')));
+	}
+	if ($s1 != $q1){
+			$app->halt(401,json_encode(array('status' => 2,'message' => 'Invalid source.')));
+	}
+	
+   	echo time();
+   	
+});
+
+
+
 $app->get('/api/test', 'zz');
 
 function zz() {
@@ -58,7 +88,9 @@ function retrieveUserInfo($apikey) {
 function retrieveSharedSecret($apikey) {
     return retrieveUserInfo($apikey)[1];
 }
-
+function retrieveSource($apikey) {
+    return retrieveUserInfo($apikey)[2];
+}
 function calculateFingerprint($apikey, $secret, $timestamp, $method, $resourceUri, $data){
         return hash('sha256', "$apikey,$secret,$timestamp,$method,$resourceUri,$data" );
 }
@@ -173,3 +205,5 @@ $app->post('/api/updates/', function () use($app){
 
 	});
 	$app->run();
+
+
