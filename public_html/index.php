@@ -11,14 +11,6 @@ $app->get('/hello/:name/:surname', function ($p1,$p2) {
 
 });
 
-$app->get('/hello/:name', function ($p1) use(&$aa){
-	echo "hello, " . $p1 . " <br>";
-	echo hash('sha256', 'Test.');
-	$tt = aa();
-	echo $tt;
-
-});
-
 
 
 $app->get('/api/currenttime/', function () use($app){
