@@ -61,13 +61,29 @@ $app->get('/api/currenttime/', function () use($app){
    	
 });
 
+	function nricValidation($nric)
+	{
+		if(ctype_alpha($nric[0]) && ctype_alpha($nric[8]) === true)
+		{	for ($i=1; $i <= 7 ; $i++) 
+			{ 
+				if(ctype_digit($nric[$i]) === false)
+				{ return 0;
+				die();}
+			}
+			
+			return 1;
+		}
+		else 
+			return 0;
+	
+	}
 
 
 $app->get('/api/test', 'zz');
 
 function zz() {
-   $val1 = retrieveSharedSecret('ce4f472f-3535-43f5-834e-482be10cf2bb');
-   echo $val1;
+   
+   echo date('Ymd');
    
 };
 
@@ -108,73 +124,88 @@ $app->get('/api/getfp', 'ab');
 
 	function ab() {
 		$timestamp = time();
-		$f = hash('sha256', "12345,123," .$timestamp.",POST,/api/updates/,nric=nn123&amount=1655&date=20150917&source=cruise" );
+		$f = hash('sha256', "12345,123," .$timestamp.",POST,/api/updates/,nric=n1234567n&amount=1655&date=09172015&source=cruise" );
 		echo $timestamp."->>".$f;
 		
 		 
 };
 
-
+function validateDate($date, $format = 'Ymd')
+{
+    $d = DateTime::createFromFormat($format, $date);
+    return $d && $d->format($format) == $date;
+}
 
 $app->post('/api/updates/', function () use($app){
 	
-	if ($_SERVER['REQUEST_METHOD'] != 'GET'){
+	if ($_SERVER['REQUEST_METHOD'] != 'POST'){
 		$app->halt(405);
 	}
-	
+		$request = $app->request;
 		$apikey = $app->request->headers->get('apikey');
+		$fingerprint = $app->request->headers->get('fingerprint');
+		$timestamp = $app->request->headers->get('timestamp');
+		$nric = $request->post('nric');
+		$amount = floatval($request->post('amount'));
+		$date = intval($request->post('date'));
+		$source = $request->post('source');
+		$resourceUri = $app->request->getResourceUri();	
+		$secret = retrieveSharedSecret($apikey);	
+		$timestamp =  intval($timestamp);
+		
 		if (!strlen($apikey)) {
 			$app->halt(400,json_encode(array('status' => 0,'message' => 'Please specify API key')));
 		}
-		if (($csv = retrieveUserInfo($apiKey)) === FALSE) {
+		if (($csv = retrieveUserInfo($apikey)) === FALSE) {
 			$app->halt(401,json_encode(array('status' => 0,'message' => 'Invalid API key')));
 		}
-
-		$timestamp = $app->request->headers->get('timestamp');
 
 		if (!strlen($timestamp)) {
 			$app->halt(400,json_encode(array('status' => 2,'message' => 'Please specify Timestamp')));
 		}
 		
-		$nric = $request->post('nric');
 		
 		if (!strlen($nric)) {
 			$app->halt(400,json_encode(array('status' => 3,'message' => 'Please specify Nric')));
 		}
 
-		$amount = round($request->post('amount'),2);
 		
 		if (!strlen($amount)){
 			$app->halt(400,json_encode(array('status' => 4,'message' => 'Please specify amount')));
 			}
 			
-		$date = $request->post('date');
+		
 		if (!strlen($date)){			
 			$app->halt(400,json_encode(array('status' => 5,'message' => 'Please specify date')));
 			}
 			
-		$source = $request->post('source');
+		
 		if (!strlen($source)){						
 			$app->halt(400,json_encode(array('status' => 6,'message' => 'Please specify source')));
 			}
 
-		
-		$resourceUri = $app->request->getResourceUri();	
-		$secret = retrieveSharedSecret($apiKey);	
-		$timestamp =  intval($timestamp);
-		
 		$terms = 0;
 		$tsB = $timestamp - 90;
 		$tsA =  $timestamp + 90;
 
-
-		$request = $app->request;
-		
-		
-		
-		
-		
 		$fp = fp($apikey, $secret, $timestamp, $nric, $amount, $date, $source, 'POST', $resourceUri);
+		$s1 = retrieveSource($apikey);
+		$n1 = nricValidation($nric);
+				
+		if ($n1 == 0)
+		{
+		$app->halt(401,json_encode(array('status' => 4,'message' => 'Invalid Nric format')));}
+		if (is_float($amount) == FALSE)
+		{
+		$app->halt(401,json_encode(array('status' => 5,'message' => 'Invalid price format')));}
+			
+		if (validateDate($date, 'Ymd') === FALSE)
+		{
+		$app->halt(401,json_encode(array('status' => 6,'message' => 'Invalid date format')));
+		}
+		if ($s1 != $source)
+		{
+		$app->halt(401,json_encode(array('status' => 7,'message' => 'Invalid source')));}
 		
 		if ($fp == $fingerprint){
 			
@@ -214,27 +245,9 @@ $app->post('/api/updates/', function () use($app){
 			$app->halt(401,json_encode(array('status' => 3,'message' => 'Invalid Timestamp')));
 
 			}
-			else if ($fp!=$fingerprint)
-			{
-			$app->halt(401,json_encode(array('status' => 2,'message' => 'Invalid fingerprint')));}
-			
-			else if ($nric[0]>=0 || $nric[8]>=0 || $nric[1]/$nric[1] != 1 )
-			{
-			$app->halt(401,json_encode(array('status' => 4,'message' => 'Invalid Nric format')));}
-			
-			else if (is_int($amount) === TRUE)
-			{
-			$app->halt(401,json_encode(array('status' => 5,'message' => 'Invalid price format')));}
-			
-			else if ((preg_match("/^[0-9]{4}(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])$/",$date) === FALSE)
-			{
-			$app->halt(401,json_encode(array('status' => 6,'message' => 'Invalid date format')));}
-			
-			$s1 = retrieveSource($apikey);
-			else if ($s1 != $source)
-			{
-			$app->halt(401,json_encode(array('status' => 7,'message' => 'Invalid source')));}
-		
+		else if ($fp != $fingerprint)
+		{
+		$app->halt(401,json_encode(array('status' => 2,'message' => 'Invalid fingerprint')));}	
 
 
 	});
