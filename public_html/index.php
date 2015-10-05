@@ -220,7 +220,7 @@ $app->post('/api/updates/', function () use($app){
 				fclose($fd);
 				echo 0;
 				}
-			else
+			if ($timestamp>=$tsA || $timestamp<=$tsB)
 			$app->halt(401,json_encode(array('status' => 3,'message' => 'Invalid Timestamp')));
 
 			}
