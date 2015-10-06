@@ -22,6 +22,7 @@ How To
 (If you have changed those functions or modified any yaml file)
 * Run `vender\bin\codecept run --html` to run test cases
 * Open the `<project folder>/tests/_output/report.html` in browser for test result
+* ![Report page screenshot](https://cloud.githubusercontent.com/assets/14342776/10309184/b555c2da-6c6d-11e5-986f-b41eaeac7107.png)
 
 More
 ---------
