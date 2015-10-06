@@ -66,7 +66,7 @@ class Functional extends \Codeception\Module
 
     public static function retrieveUserInfo($queryValue, $column=self::CSV_ORDER_APIKEY)
     {
-        $apikeyFile = fopen(APIKEYS_DB_PATH, 'r');
+        $apikeyFile = fopen(self::APIKEYS_DB_PATH, 'r');
         try {
             do {
                 $csvRecord = fgetcsv($apikeyFile);

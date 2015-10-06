@@ -9,3 +9,8 @@ modules:
     enabled:
         # add framework module here
         - \Helper\Functional
+        - REST:
+                   depends: PhpBrowser
+                   url: 'http://ntuctest.misatravel.com/api/'
+                   part: Json
+        - Asserts
