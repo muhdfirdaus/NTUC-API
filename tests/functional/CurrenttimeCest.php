@@ -31,8 +31,8 @@ class CurrenttimeCest
         $I->haveHttpHeader("apikey", $this->apiInfo[Helper::CSV_ORDER_APIKEY]);
         $I->sendGET("currenttime", ["source" => $this->apiInfo[Helper::CSV_ORDER_SOURCE]]);
         $response = $I->grabResponse();
-        $timeDifference=time()-intval($response);
-        $I->assertTrue($timeDifference<90&&$timeDifference>-90);
+        $timeDifference = time() - intval($response);
+        $I->assertTrue($timeDifference < 90 && $timeDifference > -90);
     }
 
     public function DetectMissingApikeyError(Tester $I)
@@ -63,7 +63,7 @@ class CurrenttimeCest
     {
         $I->wantToTest('response is JSON if we provide an Invalid Source');
         $I->haveHttpHeader("apikey", $this->apiInfo[Helper::CSV_ORDER_APIKEY]);
-        $I->sendGET("currenttime",["source"=>'blahblahblah']);
+        $I->sendGET("currenttime", ["source" => 'blahblahblah']);
         $I->seeResponseCodeIs(401);
         $I->seeResponseIsJson();
     }
@@ -73,21 +73,22 @@ class CurrenttimeCest
         $I->wantToTest('response if we provide an Invalid Apikey');
         $I->haveHttpHeader("apikey", "blahblahblah");
         $I->sendGET("currenttime", ["source" => $this->apiInfo[Helper::CSV_ORDER_SOURCE]]);
-        $I->assertEquals(json_decode('{"code": "1","message":"Invalid API key."}'),json_decode($I->grabResponse()));
+        $I->assertEquals(json_decode('{"code": "1","message":"Invalid API key."}'), json_decode($I->grabResponse()));
     }
 
     public function ResponseOfInvalidSource(Tester $I)
     {
         $I->wantToTest('response if we provide an Invalid Source');
         $I->haveHttpHeader("apikey", $this->apiInfo[Helper::CSV_ORDER_APIKEY]);
-        $I->sendGET("currenttime",["source"=>'airfares']);//Not matching the API Key
-        $I->assertEquals(json_decode('{"code": "2","message":"Invalid source."}'),json_decode($I->grabResponse()));
+        $I->sendGET("currenttime", ["source" => 'airfares']);//Not matching the API Key
+        $I->assertEquals(json_decode('{"code": "2","message":"Invalid source."}'), json_decode($I->grabResponse()));
     }
 
-    public function NotGetting500(Tester $I){
+    public function NotGetting500(Tester $I)
+    {
         $I->wantToTest('whether we are getting any 500 error');
         $I->haveHttpHeader("apikey", $this->apiInfo[Helper::CSV_ORDER_APIKEY]);
-        $I->sendGET("currenttime",["source"=>$this->apiInfo[Helper::CSV_ORDER_SOURCE]]);
+        $I->sendGET("currenttime", ["source" => $this->apiInfo[Helper::CSV_ORDER_SOURCE]]);
         $I->dontSeeResponseCodeIs(500);
     }
 }

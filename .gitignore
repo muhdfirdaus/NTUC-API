@@ -6,3 +6,4 @@ composer.phar
 ### IDE
 .idea
 tests/_output/*
+public_html/route.php

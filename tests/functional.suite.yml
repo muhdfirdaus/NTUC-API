@@ -11,6 +11,7 @@ modules:
         - \Helper\Functional
         - REST:
                    depends: PhpBrowser
-                   url: 'http://ntuctest.misatravel.com/api/'
+                   #url: 'http://ntuctest.misatravel.com/api/'
+                   url: 'http://localhost:80/api/'
                    part: Json
         - Asserts
