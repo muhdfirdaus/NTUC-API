@@ -5,3 +5,4 @@ composer.phar
 
 ### IDE
 .idea
+tests/_output/*
