@@ -42,7 +42,8 @@ class Functional extends \Codeception\Module
      */
     protected static function assembleFingerprintData($nric, $amount, $date, $source)
     {
-        return "nric=$nric&amount=$amount&date=$date&source=$source";
+        $data=['nric'=>$nric,'amount'=>$amount,'date'=>$date,'source'=>$source];
+        return http_build_query($data);
     }
 
     /**
