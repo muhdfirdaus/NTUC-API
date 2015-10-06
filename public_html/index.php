@@ -103,7 +103,7 @@ $app->get('/api/getfp', 'ab');
 
 	function ab() {
 		$timestamp = time();
-		$f = hash('sha256', "12345,123," .$timestamp.",POST,/api/updates/,nric=n1234567n&amount=1655&date=09172015&source=cruise" );
+		$f = hash('sha256', "12345,123," .$timestamp.",POST,/api/updates/,nric=n1234567n&amount=1655.33&date=20150917&source=cruise" );
 		echo $timestamp."->>".$f;
 		
 		 
@@ -163,9 +163,9 @@ $app->post('/api/updates/', function () use($app){
 			$app->halt(400,json_encode(array('status' => 6,'message' => 'Please specify source')));
 			}
 
-		$terms = 0;
-		$tsB = $timestamp - 90;
-		$tsA =  $timestamp + 90;
+		$terms = time();
+		$tsB = $terms - 90;
+		$tsA =  $terms + 90;
 
 		$fp = fp($apikey, $secret, $timestamp, $nric, $amount, $date, $source, 'POST', $resourceUri);
 		$s1 = retrieveSource($apikey);
@@ -219,11 +219,11 @@ $app->post('/api/updates/', function () use($app){
 				fputcsv($fd, $arr);
 				fclose($fd);
 				echo 0;
-				}
-			if ($timestamp>=$tsA || $timestamp<=$tsB)
-			$app->halt(401,json_encode(array('status' => 3,'message' => 'Invalid Timestamp')));
+				}}
+		if ($timestamp>=$tsA || $timestamp<=$tsB)
+		$app->halt(401,json_encode(array('status' => 3,'message' => 'Invalid Timestamp')));
 
-			}
+			
 		else if ($fp != $fingerprint)
 		{
 		$app->halt(401,json_encode(array('status' => 2,'message' => 'Invalid fingerprint')));}	
