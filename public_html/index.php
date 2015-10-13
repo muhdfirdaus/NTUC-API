@@ -68,16 +68,13 @@ $app->get('/api/currenttime/', function () use($app){
 
 function retrieveUserInfo($apikey) {
 	$fh = fopen('../apikeys/apikeys.csv','r');
-	try {
-		do {
-			$csv = fgetcsv($fh);
-			if (!strcmp($apikey,$csv[0])) {
-				return $csv;
-			}
-		} while($csv !== FALSE);
-	} finally {
-		fclose($fh);
-	}
+	do {
+		$csv = fgetcsv($fh);
+		if (!strcmp($apikey,$csv[0])) {
+			return $csv;
+		}
+	} while($csv !== FALSE);
+	fclose($fh);
 	return FALSE;
 }
 function retrieveSharedSecret($apikey) {
