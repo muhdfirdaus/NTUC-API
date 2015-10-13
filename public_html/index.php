@@ -24,11 +24,11 @@ $app->get('/api/currenttime/', function () use($app){
 	
 		$apikey = $app->request->headers->get('apikey');
 		if (!strlen($apikey)) {
-			$app->halt(400,json_encode(array('status' => 0,'message' => 'Please specify API key')));
+			$app->halt(400,json_encode(array('status' => 1,'message' => 'Please specify API key')));
 		}
 		$source = $app->request->params('source');
 		if (!strlen($source)){						
-			$app->halt(400,json_encode(array('status' => 6,'message' => 'Please specify source')));
+			$app->halt(400,json_encode(array('status' => 2,'message' => 'Please specify source')));
 			}
 
 	$a1 = retrieveUserInfo($apikey);
