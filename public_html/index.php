@@ -107,6 +107,7 @@ $app->get('/api/getfp', 'ab');
 
 function validateDate($date, $format = 'Ymd')
 {
+	date_default_timezone_set('Asia/Singapore')
     $d = DateTime::createFromFormat($format, $date);
     return $d && $d->format($format) == $date;
 }
