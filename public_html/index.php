@@ -11,7 +11,20 @@ $app->get('/hello/:name/:surname', function ($p1,$p2) {
 
 });
 
+	function VD($date, $format)
+{	date_default_timezone_set('Asia/Singapore');
+    $d = DateTime::createFromFormat($format, $date);
+    return $d && $d->format($format) == $date;
+}
 
+$app->get('/api/testVD/', function () use($app){
+$date = $app->request->headers->get('date');
+$format = $app->request->headers->get('format');	
+$data = VD($date, 'Ymd');
+echo $data;
+	
+	
+});
 
 $app->get('/api/currenttime/', function () use($app){
 
@@ -107,6 +120,7 @@ $app->get('/api/getfp', 'ab');
 
 function validateDate($date, $format = 'Ymd')
 {
+	date_default_timezone_set('Asia/Singapore');
     $d = DateTime::createFromFormat($format, $date);
     return $d && $d->format($format) == $date;
 }
