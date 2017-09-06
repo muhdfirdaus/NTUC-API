@@ -1,8 +1,8 @@
 <?php
 
 	define('APIKEYS_DB_PATH','../apikeys/apikeys.csv');
-
-	require '../vendor/autoload.php';
+	define('BASE_PATH',dirname(__DIR__));
+	require BASE_PATH.'/vendor/autoload.php';
 
 $app = new \Slim\Slim();
 $app->get('/hello/:name/:surname', function ($p1,$p2) {
